@@ -17,10 +17,10 @@ const categories = ['All', 'Business Websites', 'E-commerce', 'Corporate', 'Mobi
 const projects = [
   {
     id: 1,
-    name: 'TechCorp Business Site',
+    name: 'An Accomamodation Booking Website',
     category: 'Business Websites',
     tech: ['React', 'Tailwind CSS', 'Supabase'],
-    desc: 'A modern business website with service listings, contact forms, and a blog.',
+    desc: 'An innovative booking site connecting travelers to a curated selection of guest houses and bed-and-breakfast stays in Kenya.',
     image: 'https://images.pexels.com/photos/27624017/pexels-photo-27624017.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
     live: 'https://karibustayske.vercel.app/',
     case: '#',
