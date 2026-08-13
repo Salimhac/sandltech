@@ -39,6 +39,17 @@ const projects = [
   },
   {
     id: 3,
+    name: 'Haven BNB',
+    category: 'Business Websites',
+    tech: ['React',  'TypeScript'],
+    desc: 'BnB bookings, made simple.',
+    image: 'https://images.pexels.com/photos/34961503/pexels-photo-34961503.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+    live: 'https://haven-bnb.vercel.app/',
+    case: '#',
+    demo: true,
+  },
+  {
+    id: 4,
     name: 'Nexus Mobile App',
     category: 'Mobile Apps',
     tech: ['React Native', 'Firebase', 'TypeScript'],
