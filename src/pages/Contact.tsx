@@ -11,9 +11,10 @@ function AnimatedSection({ children, className = '', delay = 0 }: { children: Re
   );
 }
 
-// ============ TELEGRAM CONFIGURATION ============
-const TELEGRAM_BOT_TOKEN = '8804132248:AAFaz-C9MUBIiukZ7WDTBKG40T2T1Hl4hzg';
-const TELEGRAM_CHAT_ID = '7126496262'; 
+// ============ TELEGRAM CONFIGURATION (SECURE) ============
+// These values are loaded from environment variables
+const TELEGRAM_BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN || '';
+const TELEGRAM_CHAT_ID = import.meta.env.VITE_TELEGRAM_CHAT_ID || '';
 
 // WhatsApp link for the button
 const WHATSAPP_NUMBER = '254700000000';
@@ -62,6 +63,14 @@ export default function Contact() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+
+    // Check if credentials are configured
+    if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
+      console.error('Telegram credentials not configured!');
+      alert('⚠️ Configuration error. Please contact support.');
+      setLoading(false);
+      return;
+    }
 
     try {
       const message = `
