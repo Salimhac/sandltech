@@ -11,6 +11,12 @@ function AnimatedSection({ children, className = '', delay = 0 }: { children: Re
   );
 }
 
+// ============ SIDOBE CONFIGURATION ============
+// Replace with your credentials from Sidobe Console
+const SIDOBE_SECRET_KEY = 'ClNjNYGZYqToZvstapHGEmDQtmhajWjIpNdrlNtKwWdUyVyqiv'; 
+const YOUR_WHATSAPP = '254719622849';
+
+// WhatsApp link for the button (opens WhatsApp app)
 const WHATSAPP_NUMBER = '254700000000';
 const WA_MESSAGE = encodeURIComponent(
   'Hello S&L Tech, I would like to inquire about your web and mobile development services.'
@@ -53,15 +59,55 @@ export default function Contact() {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  // ============ HANDLE FORM SUBMISSION ============
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
+
+    try {
+      // Format the message for WhatsApp
+      const message = `
+📩 New Inquiry from ${form.fullName}
+🏢 Company: ${form.company || 'Not provided'}
+📧 Email: ${form.email}
+📱 Phone: ${form.phone || 'Not provided'}
+🛠 Service: ${form.service}
+💬 Message: ${form.message}
+      `.trim();
+
+      // Send to Sidobe API - this sends DIRECTLY to your WhatsApp
+      const response = await fetch('https://api.sidobe.com/wa/v1', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          secretKey: SIDOBE_SECRET_KEY,
+          phone: YOUR_WHATSAPP, // Your WhatsApp number
+          message: message,
+        }),
+      });
+
+      if (response.ok) {
+        setSubmitted(true);
+        // Reset form after successful submission
+        setForm({
+          fullName: '', company: '', email: '', phone: '', service: '', message: '',
+        });
+      } else {
+        const errorData = await response.json();
+        console.error('Sidobe Error:', errorData);
+        throw new Error('Failed to send message');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('⚠️ Failed to send message. Please try again or contact us directly on WhatsApp.');
+    } finally {
       setLoading(false);
-      setSubmitted(true);
-    }, 1200);
+    }
   }
 
+  // ============ RENDER ============
   return (
     <main className="pt-24">
       {/* Hero */}
@@ -139,7 +185,7 @@ export default function Contact() {
                     </div>
                     <h3 className="font-display text-2xl font-bold text-white">Inquiry Sent!</h3>
                     <p className="text-white/50 max-w-sm leading-relaxed">
-                      Thank you for reaching out. Our team will review your inquiry and get back to you within 24 hours.
+                      ✅ Your message has been sent directly to our team. We'll get back to you within 24 hours.
                     </p>
                     <button
                       onClick={() => { setSubmitted(false); setForm({ fullName: '', company: '', email: '', phone: '', service: '', message: '' }); }}
