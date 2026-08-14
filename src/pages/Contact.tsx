@@ -12,11 +12,10 @@ function AnimatedSection({ children, className = '', delay = 0 }: { children: Re
 }
 
 // ============ SIDOBE CONFIGURATION ============
-// Replace with your credentials from Sidobe Console
-const SIDOBE_SECRET_KEY = 'ClNjNYGZYqToZvstapHGEmDQtmhajWjIpNdrlNtKwWdUyVyqiv'; 
+const SIDOBE_SECRET_KEY = 'ClNjNYGZYqToZvstapHGEmDQtmhajWjIpNdrlNtKwWdUyVyqiv';
 const YOUR_WHATSAPP = '254719622849';
 
-// WhatsApp link for the button (opens WhatsApp app)
+// WhatsApp link for the button
 const WHATSAPP_NUMBER = '254700000000';
 const WA_MESSAGE = encodeURIComponent(
   'Hello S&L Tech, I would like to inquire about your web and mobile development services.'
@@ -59,54 +58,84 @@ export default function Contact() {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
   }
 
-  // ============ HANDLE FORM SUBMISSION ============
+  // ============ FIXED HANDLE SUBMISSION ============
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      // Format the message for WhatsApp
-      const message = `
+  try {
+    // Format the message for WhatsApp
+    const message = `
 📩 New Inquiry from ${form.fullName}
 🏢 Company: ${form.company || 'Not provided'}
 📧 Email: ${form.email}
 📱 Phone: ${form.phone || 'Not provided'}
 🛠 Service: ${form.service}
 💬 Message: ${form.message}
-      `.trim();
+    `.trim();
 
-      // Send to Sidobe API - this sends DIRECTLY to your WhatsApp
-      const response = await fetch('https://api.sidobe.com/wa/v1', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          secretKey: SIDOBE_SECRET_KEY,
-          phone: YOUR_WHATSAPP, // Your WhatsApp number
-          message: message,
-        }),
-      });
+    // Try different API endpoints
+    const endpoints = [
+      'https://api.sidobe.com/v1/messages',
+      'https://api.sidobe.com/api/v1/whatsapp/send',
+      'https://sidobe.com/api/send',
+    ];
 
-      if (response.ok) {
-        setSubmitted(true);
-        // Reset form after successful submission
-        setForm({
-          fullName: '', company: '', email: '', phone: '', service: '', message: '',
+    let lastError: string | null = null;
+    
+    for (const endpoint of endpoints) {
+      try {
+        console.log(`Trying endpoint: ${endpoint}`);
+        
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${SIDOBE_SECRET_KEY}`,
+            'X-API-Key': SIDOBE_SECRET_KEY,
+          },
+          body: JSON.stringify({
+            phone: YOUR_WHATSAPP,
+            message: message,
+            to: YOUR_WHATSAPP,
+            text: message,
+            body: message,
+          }),
         });
-      } else {
-        const errorData = await response.json();
-        console.error('Sidobe Error:', errorData);
-        throw new Error('Failed to send message');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('⚠️ Failed to send message. Please try again or contact us directly on WhatsApp.');
-    } finally {
-      setLoading(false);
-    }
-  }
 
+        console.log(`Response status for ${endpoint}:`, response.status);
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Success!', data);
+          setSubmitted(true);
+          setForm({
+            fullName: '', company: '', email: '', phone: '', service: '', message: '',
+          });
+          setLoading(false);
+          return;
+        } else {
+          const errorText = await response.text();
+          console.log(`Error from ${endpoint}:`, errorText);
+          lastError = errorText;
+        }
+      } catch (err) {
+        console.log(`Endpoint ${endpoint} failed:`, err);
+        lastError = err instanceof Error ? err.message : 'Unknown error';
+      }
+    }
+
+    // If we get here, all endpoints failed
+    throw new Error(lastError || 'All endpoints failed');
+
+  } catch (error) {
+    console.error('Error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    alert(`⚠️ Failed to send message: ${errorMessage}\n\nPlease try again or contact us directly on WhatsApp.`);
+  } finally {
+    setLoading(false);
+  }
+}
   // ============ RENDER ============
   return (
     <main className="pt-24">
