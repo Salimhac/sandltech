@@ -11,9 +11,9 @@ function AnimatedSection({ children, className = '', delay = 0 }: { children: Re
   );
 }
 
-// ============ SIDOBE CONFIGURATION ============
-const SIDOBE_SECRET_KEY = 'ClNjNYGZYqToZvstapHGEmDQtmhajWjIpNdrlNtKwWdUyVyqiv';
-const YOUR_WHATSAPP = '254719622849';
+// ============ TELEGRAM CONFIGURATION ============
+const TELEGRAM_BOT_TOKEN = '8804132248:AAFaz-C9MUBIiukZ7WDTBKG40T2T1Hl4hzg';
+const TELEGRAM_CHAT_ID = '7126496262'; 
 
 // WhatsApp link for the button
 const WHATSAPP_NUMBER = '254700000000';
@@ -58,84 +58,54 @@ export default function Contact() {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
   }
 
-  // ============ FIXED HANDLE SUBMISSION ============
+  // ============ TELEGRAM HANDLE SUBMISSION ============
   async function handleSubmit(e: React.FormEvent) {
-  e.preventDefault();
-  setLoading(true);
+    e.preventDefault();
+    setLoading(true);
 
-  try {
-    // Format the message for WhatsApp
-    const message = `
+    try {
+      const message = `
 📩 New Inquiry from ${form.fullName}
 🏢 Company: ${form.company || 'Not provided'}
 📧 Email: ${form.email}
 📱 Phone: ${form.phone || 'Not provided'}
 🛠 Service: ${form.service}
 💬 Message: ${form.message}
-    `.trim();
+      `.trim();
 
-    // Try different API endpoints
-    const endpoints = [
-      'https://api.sidobe.com/v1/messages',
-      'https://api.sidobe.com/api/v1/whatsapp/send',
-      'https://sidobe.com/api/send',
-    ];
-
-    let lastError: string | null = null;
-    
-    for (const endpoint of endpoints) {
-      try {
-        console.log(`Trying endpoint: ${endpoint}`);
-        
-        const response = await fetch(endpoint, {
+      // Send to Telegram (No CORS issues!)
+      const response = await fetch(
+        `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
+        {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${SIDOBE_SECRET_KEY}`,
-            'X-API-Key': SIDOBE_SECRET_KEY,
           },
           body: JSON.stringify({
-            phone: YOUR_WHATSAPP,
-            message: message,
-            to: YOUR_WHATSAPP,
+            chat_id: TELEGRAM_CHAT_ID,
             text: message,
-            body: message,
           }),
-        });
-
-        console.log(`Response status for ${endpoint}:`, response.status);
-
-        if (response.ok) {
-          const data = await response.json();
-          console.log('Success!', data);
-          setSubmitted(true);
-          setForm({
-            fullName: '', company: '', email: '', phone: '', service: '', message: '',
-          });
-          setLoading(false);
-          return;
-        } else {
-          const errorText = await response.text();
-          console.log(`Error from ${endpoint}:`, errorText);
-          lastError = errorText;
         }
-      } catch (err) {
-        console.log(`Endpoint ${endpoint} failed:`, err);
-        lastError = err instanceof Error ? err.message : 'Unknown error';
+      );
+
+      if (response.ok) {
+        setSubmitted(true);
+        setForm({
+          fullName: '', company: '', email: '', phone: '', service: '', message: '',
+        });
+      } else {
+        const errorData = await response.json();
+        console.error('Telegram Error:', errorData);
+        throw new Error('Failed to send message');
       }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('⚠️ Failed to send message. Please try again or contact us directly.');
+    } finally {
+      setLoading(false);
     }
-
-    // If we get here, all endpoints failed
-    throw new Error(lastError || 'All endpoints failed');
-
-  } catch (error) {
-    console.error('Error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-    alert(`⚠️ Failed to send message: ${errorMessage}\n\nPlease try again or contact us directly on WhatsApp.`);
-  } finally {
-    setLoading(false);
   }
-}
+
   // ============ RENDER ============
   return (
     <main className="pt-24">
