@@ -16,6 +16,10 @@ function AnimatedSection({ children, className = '', delay = 0 }: { children: Re
 const TELEGRAM_BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN || '';
 const TELEGRAM_CHAT_ID = import.meta.env.VITE_TELEGRAM_CHAT_ID || '';
 
+// Add this right after your imports
+console.log('Bot Token:', import.meta.env.VITE_TELEGRAM_BOT_TOKEN);
+console.log('Chat ID:', import.meta.env.VITE_TELEGRAM_CHAT_ID);
+
 // WhatsApp link for the button
 const WHATSAPP_NUMBER = '254700000000';
 const WA_MESSAGE = encodeURIComponent(
