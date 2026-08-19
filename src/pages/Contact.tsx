@@ -24,8 +24,8 @@ const WA_MESSAGE = encodeURIComponent(
 
 const contactInfo = [
   { icon: Mail, label: 'Email', value: 'info@sltech.co.ke', href: 'mailto:info@sltech.co.ke' },
-  { icon: Phone, label: 'Phone', value: '+254 700 000 000', href: 'tel:+254700000000' },
-  { icon: MessageCircle, label: 'WhatsApp', value: '+254 700 000 000', href: `https://wa.me/${WHATSAPP_NUMBER}?text=${WA_MESSAGE}` },
+  { icon: Phone, label: 'Phone', value: '+254 719 622 849', href: 'tel:+254700000000' },
+  { icon: MessageCircle, label: 'WhatsApp', value: '+254 719 622 849', href: `https://wa.me/${WHATSAPP_NUMBER}?text=${WA_MESSAGE}` },
   { icon: MapPin, label: 'Location', value: 'Nairobi, Kenya', href: '#' },
   { icon: Clock, label: 'Working Hours', value: 'Mon–Fri: 8am–6pm EAT', href: '#' },
 ];
@@ -256,7 +256,7 @@ export default function Contact() {
                           type="tel"
                           value={form.phone}
                           onChange={handleChange}
-                          placeholder="+254 700 000 000"
+                          placeholder="+254 719 622 849"
                           className="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-3 text-sm outline-none focus:border-gold-300 transition-colors placeholder-white/20"
                         />
                       </div>
