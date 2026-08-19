@@ -17,14 +17,14 @@ const TELEGRAM_CHAT_ID = import.meta.env.VITE_TELEGRAM_CHAT_ID || '';
 
 
 // WhatsApp link for the button
-const WHATSAPP_NUMBER = '254700000000';
+const WHATSAPP_NUMBER = '254719622849';
 const WA_MESSAGE = encodeURIComponent(
   'Hello S&L Tech, I would like to inquire about your web and mobile development services.'
 );
 
 const contactInfo = [
   { icon: Mail, label: 'Email', value: 'info@sltech.co.ke', href: 'mailto:info@sltech.co.ke' },
-  { icon: Phone, label: 'Phone', value: '+254 719 622 849', href: 'tel:+254700000000' },
+  { icon: Phone, label: 'Phone', value: '+254 719 622 849', href: 'tel:+254719622849' },
   { icon: MessageCircle, label: 'WhatsApp', value: '+254 719 622 849', href: `https://wa.me/${WHATSAPP_NUMBER}?text=${WA_MESSAGE}` },
   { icon: MapPin, label: 'Location', value: 'Nairobi, Kenya', href: '#' },
   { icon: Clock, label: 'Working Hours', value: 'Mon–Fri: 8am–6pm EAT', href: '#' },
